@@ -3,3 +3,12 @@ CS 383 Homework 1
 Assigned: Febuary 7, 2022
 Due: Febuary 11, 2022
 
+Best Meals:
+Cole- 
+
+Zach- 
+
+
+Sources Consulted:
+
+
