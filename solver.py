@@ -35,6 +35,13 @@ def solve_puzzle(start_state, flavor):
             (successors generated)
 
     """
+    results = {
+        'path' : [],
+        'path_cost' : '0',
+        'frontier_cost' : '0',
+        'expanded_count' : '0'
+    }
+    
     if flavor.find('-') > -1:
         strat, heur = flavor.split('-')
     else:
