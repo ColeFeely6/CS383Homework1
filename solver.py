@@ -1,3 +1,4 @@
+from queue import PriorityQueue
 import sys
 
 import puzz
@@ -242,10 +243,10 @@ class UniformCostSolver(PuzzleSolver):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
-        self.frontier = pdqpq.FifoQueue()
+        self.frontier = pdqpq.FifoQueue(PriorityQueue)
         self.explored = set()
         super().__init__(goal_state)
-
+    
     def add_to_frontier(self, node):
         """Add state to frontier and increase the frontier count."""
         self.frontier.add(node)
