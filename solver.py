@@ -50,11 +50,7 @@ def solve_puzzle(start_state, flavor):
     if strat == 'bfs':
         return BreadthFirstSolver(GOAL_STATE).solve(start_state)
     elif strat == 'ucost':
-
-        # TODO This is where we write all the search algorithm code
-
-
-        raise NotImplementedError(strat + ' not implemented yet')  # delete this line!
+        return UCostSolver(GOAL_STATE).solve(start_state)
     elif strat == 'greedy':
         raise NotImplementedError(strat + ' not implemented yet')  # delete this line!
     elif strat == 'astar':
@@ -128,7 +124,7 @@ class PuzzleSolver:
         """Return the solution path from the start state of the search to a target.
         
         Results are obtained by retracing the path backwards through the parent tree to the start
-        state for the serach at the root.
+        state for the search at the root.
         
         Args:
             state (EightPuzzleBoard): target state in the search tree
@@ -243,62 +239,100 @@ class BreadthFirstSolver(PuzzleSolver):
         # if we get here, the search failed
         return self.get_results_dict(None)
 
-    class UCostSolver(PuzzleSolver):
+class UCostSolver(PuzzleSolver):
         """Implementation of UCost Search based on PuzzleSolver"""
 
-        def __init__(self, goal_state):
-            self.frontier = pdqpq.FifoQueue()
-            self.explored = set()
-            super().__init__(goal_state)
+    def __init__(self, goal_state):
+        self.frontier = pdqpq.FifoQueue()
+        self.explored = set()
+        super().__init__(goal_state)
 
-        def add_to_frontier(self, node):
-            """Add state to frontier and increase the frontier count."""
-            self.frontier.add(node)
-            self.frontier_count += 1
+    def add_to_frontier(self, node):
+        """Add state to frontier and increase the frontier count."""
+        self.frontier.add(node)
+        self.frontier_count += 1
 
-        def expand_node(self, node):
-            """Get the next state from the frontier and increase the expanded count."""
-            self.explored.add(node)
-            self.expanded_count += 1
-            return node.successors()
+    def expand_node(self, node):
+        """Get the next state from the frontier and increase the expanded count."""
+        self.explored.add(node)
+        self.expanded_count += 1
+        return node.successors()
 
-        def solve(self, start_state):
-            self.parents[start_state] = None
-            self.add_to_frontier(start_state)
+    def solve(self, start_state):
+        self.parents[start_state] = None
+        self.add_to_frontier(start_state)
 
-            if start_state == self.goal:  # edge case
-                return self.get_results_dict(start_state)
+        if start_state == self.goal:  # edge case
+            return self.get_results_dict(start_state)
 
-            while not self.frontier.is_empty():
-                node = self.frontier.pop()  # get the next node in the frontier queue
-                succs = self.expand_node(node)
+        while not self.frontier.is_empty():
+            node = self.frontier.pop()  # get the next node in the frontier queue
+            succs = self.expand_node(node)
 
-                for move, succ in succs.items():
-                    #prev_cost = ...
-                    #curr_cost = ...
-                    if (succ not in self.frontier) and (succ not in self.explored):
-                        # Find new cost
-                        # increment frontier counter
-
-
-                        self.parents[succ] = node
-
-                        # BFS checks for goal state _before_ adding to frontier
-                        if succ == self.goal:
-                            return self.get_results_dict(succ)
-                        else:
-                            self.add_to_frontier(succ)
-                    # Update the cost
-                    elif (succ in self.frontier) and (self.frontier.get(succ) > self.curr_cost ):
-                        # Todo set up the curr_cost attriboute and prev_cost attr
-                        # add to frontier with new cost
+            for move, succ in succs.items():
+                #prev_cost = ...
+                #curr_cost = ...
+                if (succ not in self.frontier) and (succ not in self.explored):
+                    # Find new cost
+                    # increment frontier counter
 
 
-            # if we get here, the search failed
-            return self.get_results_dict(None)
+                    self.parents[succ] = node
 
+                    # BFS checks for goal state _before_ adding to frontier
+                    if succ == self.goal:
+                        return self.get_results_dict(succ)
+                    else:
+                        self.add_to_frontier(succ)
+                # Update the cost
+                elif (succ in self.frontier) and (self.frontier.get(succ) > self.curr_cost ):
+                    # Todo set up the curr_cost attriboute and prev_cost attr
+                    # add to frontier with new cost
+        # if we get here, the search failed
+        return self.get_results_dict(None)
 
+class GreedySolver(PuzzleSolver):
+    """Implementation of Breadth-First Search based on PuzzleSolver"""
 
+    def __init__(self, goal_state):
+        self.frontier = pdqpq.FifoQueue()
+        self.explored = set()
+        super().__init__(goal_state)
+
+    def add_to_frontier(self, node):
+        """Add state to frontier and increase the frontier count."""
+        self.frontier.add(node)
+        self.frontier_count += 1
+
+    def expand_node(self, node):
+        """Get the next state from the frontier and increase the expanded count."""
+        self.explored.add(node)
+        self.expanded_count += 1
+        return node.successors()
+
+    def solve(self, start_state):
+        self.parents[start_state] = None
+        self.add_to_frontier(start_state)
+
+        if start_state == self.goal:  # edge case
+            return self.get_results_dict(start_state)
+
+        while not self.frontier.is_empty():
+            node = self.frontier.pop()  # get the next node in the frontier queue
+            succs = self.expand_node(node)
+
+            for move, succ in succs.items():
+                if (succ not in self.frontier) and (succ not in self.explored):
+                    self.parents[succ] = node
+
+                    # BFS checks for goal state _before_ adding to frontier
+                    if succ == self.goal:
+                        return self.get_results_dict(succ)
+                    else:
+                        self.add_to_frontier(succ)
+
+        # if we get here, the search failed
+        return self.get_results_dict(None)
 
         ############################################
 
