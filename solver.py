@@ -35,12 +35,6 @@ def solve_puzzle(start_state, flavor):
             (successors generated)
 
     """
-    results = {
-        'path' : [],
-        'path_cost' : '0',
-        'frontier_cost' : '0',
-        'expanded_count' : '0'
-    }
 
     if flavor.find('-') > -1:
         strat, heur = flavor.split('-')
@@ -69,11 +63,12 @@ def get_test_puzzles():
         A tuple containing three EightPuzzleBoard objects representing start states that have an
         optimal solution path length of 3-5, 10-15, and >=25 respectively.
     
-    """ 
+    """
     #
     # fill in function body here
-    #    
-    return (None, None, None)  # fix this line!
+    #
+    # moves in: (3, )
+    return (312459678, None, None)  # fix this line!
 
 
 def print_table(flav__results, include_path=False):
@@ -262,6 +257,7 @@ class UniformCostSolver(PuzzleSolver):
         self.expanded_count += 1
         return node.successors()
 
+    # Need to account for the weights and cost in UCS
     def solve(self, start_state):
         self.parents[start_state] = None
         self.add_to_frontier(start_state)
@@ -272,12 +268,28 @@ class UniformCostSolver(PuzzleSolver):
         while not self.frontier.is_empty():
             node = self.frontier.pop()  # get the next node in the frontier queue
             succs = self.expand_node(node)
+            #prev_cost = ...
+            #new_ ost = ...
 
+
+
+            # Need to somehow determine which successor has the lowest cost and explore that first
+            # Adds successors to priority queue based on cost
+
+            #lowest cost = 0
+            #for i in range(len(succs)):
+            #   if i == 0:
+            #       add to queue
+            #   if i.get_cost() > succs.get_cost():
+            #       add to queue but place in the front
+            #   else:
+            #       place in the back
             for move, succ in succs.items():
+
                 if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
 
-                # BFS checks for goal state _before_ adding to frontier
+                # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
