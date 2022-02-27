@@ -67,8 +67,11 @@ def get_test_puzzles():
     #
     # fill in function body here
     #
+    move_in_three = puzz.EightPuzzleBoard("312459678")
+    move_in_ten = puzz.EightPuzzleBoard("320518467")
+    move_in_twenty_five = puzz.EightPuzzleBoard("876021534")
     # moves in: (3, )
-    return (312459678, None, None)  # fix this line!
+    return (move_in_three, move_in_ten, move_in_twenty_five)  # fix this line!
 
 
 def print_table(flav__results, include_path=False):
