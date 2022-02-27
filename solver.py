@@ -1,5 +1,4 @@
 import sys
-
 import puzz
 import pdqpq
 
@@ -95,6 +94,7 @@ def print_table(flav__results, include_path=False):
         "frontier" + ("{:>12,}" * c).format(*[res['frontier_count'] for _, res in result_tups]),
         "expanded" + ("{:>12,}" * c).format(*[res['expanded_count'] for _, res in result_tups])
     ]
+
     if include_path:
         rows.append("path")
         longest_path = max([ len(res['path']) for _, res in result_tups if 'path' in res ])
