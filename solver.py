@@ -1,3 +1,4 @@
+from queue import PriorityQueue
 import sys
 
 import puzz
@@ -49,10 +50,13 @@ def solve_puzzle(start_state, flavor):
 
     if strat == 'bfs':
         return BreadthFirstSolver(GOAL_STATE).solve(start_state)
+      
     elif strat == 'ucost':
-        return UCostSolver(GOAL_STATE).solve(start_state)
+        return UniformCostSolver(GOAL_STATE).solve(start_state)
+      
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
+      
     elif strat == 'astar':
         return AStarSolver(GOAL_STATE).solve(start_state)
     else:
@@ -230,23 +234,23 @@ class BreadthFirstSolver(PuzzleSolver):
                 if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
 
-                    # BFS checks for goal state _before_ adding to frontier
+                # BFS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
                         self.add_to_frontier(succ)
 
         # if we get here, the search failed
-        return self.get_results_dict(None)
-
-class UCostSolver(PuzzleSolver):
-        """Implementation of UCost Search based on PuzzleSolver"""
+        return self.get_results_dict(None) 
+    
+class UniformCostSolver(PuzzleSolver):
+    """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
-        self.frontier = pdqpq.FifoQueue()
+        self.frontier = pdqpq.FifoQueue(PriorityQueue)
         self.explored = set()
         super().__init__(goal_state)
-
+    
     def add_to_frontier(self, node):
         """Add state to frontier and increase the frontier count."""
         self.frontier.add(node)
@@ -262,7 +266,7 @@ class UCostSolver(PuzzleSolver):
         self.parents[start_state] = None
         self.add_to_frontier(start_state)
 
-        if start_state == self.goal:  # edge case
+        if start_state == self.goal:  # edge case        
             return self.get_results_dict(start_state)
 
         while not self.frontier.is_empty():
@@ -270,26 +274,18 @@ class UCostSolver(PuzzleSolver):
             succs = self.expand_node(node)
 
             for move, succ in succs.items():
-                #prev_cost = ...
-                #curr_cost = ...
                 if (succ not in self.frontier) and (succ not in self.explored):
-                    # Find new cost
-                    # increment frontier counter
-
-
                     self.parents[succ] = node
 
-                    # BFS checks for goal state _before_ adding to frontier
+                # BFS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
                         self.add_to_frontier(succ)
-                # Update the cost
-                elif (succ in self.frontier) and (self.frontier.get(succ) > self.curr_cost ):
-                    # Todo set up the curr_cost attriboute and prev_cost attr
-                    # add to frontier with new cost
+
         # if we get here, the search failed
         return self.get_results_dict(None)
+
 
 class GreedySolver(PuzzleSolver):
     """Implementation of Breadth-First Search based on PuzzleSolver"""
