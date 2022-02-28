@@ -246,16 +246,20 @@ class UniformCostSolver(PuzzleSolver):
 
     def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue(PriorityQueue)
-        self.explored = set()
+        self.explored = set() # set function creates a set object and are in random order
         super().__init__(goal_state)
-    
+
+    ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
     def add_to_frontier(self, node):
         """Add state to frontier and increase the frontier count."""
+        # Frontier is an instance of Priority Queue
         self.frontier.add(node)
         self.frontier_count += 1
 
+
     def expand_node(self, node):
         """Get the next state from the frontier and increase the expanded count."""
+
         self.explored.add(node)
         self.expanded_count += 1
         return node.successors()
@@ -265,16 +269,20 @@ class UniformCostSolver(PuzzleSolver):
         self.parents[start_state] = None
         self.add_to_frontier(start_state)
 
+        ## Obviously we need to get the starting state and just look at that one first
+        ## But from then on, we need to add and organize by lowest cost
+
         if start_state == self.goal:  # edge case        
             return self.get_results_dict(start_state)
 
         while not self.frontier.is_empty():
             node = self.frontier.pop()  # get the next node in the frontier queue
+
             succs = self.expand_node(node)
             #prev_cost = ...
             #new_ ost = ...
 
-
+            # Need to reorder the succs
 
             # Need to somehow determine which successor has the lowest cost and explore that first
             # Adds successors to priority queue based on cost
