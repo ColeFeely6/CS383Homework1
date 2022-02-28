@@ -247,6 +247,7 @@ class UniformCostSolver(PuzzleSolver):
     def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue(PriorityQueue)
         self.explored = set() # set function creates a set object and are in random order
+        self.tracker = {start_state: (None,"start", 0)}
         super().__init__(goal_state)
 
     ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
@@ -268,6 +269,8 @@ class UniformCostSolver(PuzzleSolver):
     def solve(self, start_state):
         self.parents[start_state] = None
         self.add_to_frontier(start_state)
+        # key: child, value: (parent, direction of move, cost up to child)
+
 
         ## Obviously we need to get the starting state and just look at that one first
         ## But from then on, we need to add and organize by lowest cost
@@ -279,8 +282,6 @@ class UniformCostSolver(PuzzleSolver):
             node = self.frontier.pop()  # get the next node in the frontier queue
 
             succs = self.expand_node(node)
-            #prev_cost = ...
-            #new_ ost = ...
 
             # Need to reorder the succs
 
@@ -296,9 +297,15 @@ class UniformCostSolver(PuzzleSolver):
             #   else:
             #       place in the back
             for move, succ in succs.items():
-
+                prev_cost = self.tracker[node][2]
+                new_cost = prev_cost + self.get_cost(node, succ)
                 if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
+
+                    """frontier.add(n, new_cost)
+                    results["frontier_count"] += 1  # increase frontier count in results
+                    tracker[n] = (node, move, new_cost)  # key: child, value: (parent, direction of move, cost up to child)
+                    """
 
                 # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
