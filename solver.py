@@ -241,15 +241,17 @@ class BreadthFirstSolver(PuzzleSolver):
         # if we get here, the search failed
         return self.get_results_dict(None) 
     
-class UniformCostSolver(PuzzleSolver,heur):
+class UniformCostSolver(PuzzleSolver):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state):
+    def __init__(self, goal_state, h):
         self.frontier = pdqpq.FifoQueue(PriorityQueue)
         self.explored = set() # set function creates a set object and are in random order
         # key: child, value: (parent, direction of move, cost up to child)
         #self.tracker = {start_state: (None,"start", 0)}
         super().__init__(goal_state)
+        self.heur = h
+
 
     ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
     def add_to_frontier(self, node):
