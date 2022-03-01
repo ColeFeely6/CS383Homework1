@@ -45,7 +45,7 @@ def solve_puzzle(start_state, flavor):
         return BreadthFirstSolver(GOAL_STATE).solve(start_state)
       
     elif strat == 'ucost':
-        return UniformCostSolver(GOAL_STATE).solve(start_state)
+        return UniformCostSolver(GOAL_STATE,heur).solve(start_state)
       
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
@@ -241,7 +241,7 @@ class BreadthFirstSolver(PuzzleSolver):
         # if we get here, the search failed
         return self.get_results_dict(None) 
     
-class UniformCostSolver(PuzzleSolver):
+class UniformCostSolver(PuzzleSolver,heur):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
@@ -307,7 +307,7 @@ class UniformCostSolver(PuzzleSolver):
                     self.frontier.add(succ, priority = new_cost)
                     #frontier.add(n)
                     #results["frontier_count"] += 1  # increase frontier count in results
-                    
+
 
                 # self.frontier.add(node, priority = cost)
 
