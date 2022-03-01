@@ -247,7 +247,8 @@ class UniformCostSolver(PuzzleSolver):
     def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue(PriorityQueue)
         self.explored = set() # set function creates a set object and are in random order
-        self.tracker = {start_state: (None,"start", 0)}
+        # key: child, value: (parent, direction of move, cost up to child)
+        #self.tracker = {start_state: (None,"start", 0)}
         super().__init__(goal_state)
 
     ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
@@ -269,7 +270,7 @@ class UniformCostSolver(PuzzleSolver):
     def solve(self, start_state):
         self.parents[start_state] = None
         self.add_to_frontier(start_state)
-        # key: child, value: (parent, direction of move, cost up to child)
+
 
 
         ## Obviously we need to get the starting state and just look at that one first
@@ -296,21 +297,25 @@ class UniformCostSolver(PuzzleSolver):
             #       add to queue but place in the front
             #   else:
             #       place in the back
-            for move, succ in succs.items():
-                prev_cost = self.tracker[node][2]
-                new_cost = prev_cost + self.get_cost(node, succ)
-                if (succ not in self.frontier) and (succ not in self.explored):
-                    self.parents[succ] = node
 
-                    """frontier.add(n, new_cost)
-                    results["frontier_count"] += 1  # increase frontier count in results
-                    tracker[n] = (node, move, new_cost)  # key: child, value: (parent, direction of move, cost up to child)
-                    """
+
+            for move, succ in succs.items():
+                prev_cost = self.parents[succ]
+                new_cost = prev_cost + self.get_cost(node, succ)
+                if (succ in self.frontier) and (succ not in self.explored):
+                    self.parents[succ] = node
+                    self.frontier.add(succ, priority = new_cost)
+                    #frontier.add(n)
+                    #results["frontier_count"] += 1  # increase frontier count in results
+                    
+
+                # self.frontier.add(node, priority = cost)
+
 
                 # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
-                    else:
+                    elif (succ not in self.frontier) and (self.frontier.get(succ) > new_cost):
                         self.add_to_frontier(succ)
 
         # if we get here, the search failed
@@ -318,7 +323,7 @@ class UniformCostSolver(PuzzleSolver):
 
 
 class GreedySolver(PuzzleSolver):
-    """Implementation of Breadth-First Search based on PuzzleSolver"""
+    """Implementation of Greedy-First Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue()
