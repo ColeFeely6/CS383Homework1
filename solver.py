@@ -5,15 +5,6 @@ import pdqpq
 
 GOAL_STATE = puzz.EightPuzzleBoard("012345678")
 
-# Init issue:
-# So I am declaring an object and passing the wrong number of arguments into the constructor
-# So somewhere I am doing something like x = PuzzleSolver(something_I_dont_need)
-# So I need to find all the uses of my consctructors
-
-
-# PuzzleSolver
-#
-
 def solve_puzzle(start_state, flavor):
     """Perform a search to find a solution to a puzzle.
     

@@ -1,0 +1,8 @@
+Wednesday 3/2
+
+I figured out the init issue, when Zach started the UCost search, when declaring a Fifo in the init() function of
+the UCost class, he passed, Fifo(PriorityQueue) but this was not necessary as the Fifo class is already a sub class of
+the PQ class and the Fifo class does not take any arguements but self.
+
+New bug: the UCost function isn't working properly and isn't solving the puzzle.
+
