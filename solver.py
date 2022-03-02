@@ -3,7 +3,6 @@ import sys
 import puzz
 import pdqpq
 
-
 GOAL_STATE = puzz.EightPuzzleBoard("012345678")
 
 
@@ -43,13 +42,13 @@ def solve_puzzle(start_state, flavor):
 
     if strat == 'bfs':
         return BreadthFirstSolver(GOAL_STATE).solve(start_state)
-      
+
     elif strat == 'ucost':
-        return UniformCostSolver(GOAL_STATE,heur).solve(start_state)
-      
+        return UniformCostSolver(GOAL_STATE).solve(start_state)
+
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
-      
+
     elif strat == 'astar':
         return AStarSolver(GOAL_STATE).solve(start_state)
     else:
@@ -87,19 +86,19 @@ def print_table(flav__results, include_path=False):
     c = len(result_tups)
     na = "{:>12}".format("n/a")
     rows = [  # abandon all hope ye who try to modify the table formatting code...
-        "flavor  " + "".join([ "{:>12}".format(tag) for tag, _ in result_tups]),
-        "--------" + ("  " + "-"*10)*c,
-        "length  " + "".join([ "{:>12}".format(len(res['path'])) if 'path' in res else na 
-                                for _, res in result_tups ]),
-        "cost    " + "".join([ "{:>12,}".format(res['path_cost']) if 'path_cost' in res else na 
-                                for _, res in result_tups ]),
+        "flavor  " + "".join(["{:>12}".format(tag) for tag, _ in result_tups]),
+        "--------" + ("  " + "-" * 10) * c,
+        "length  " + "".join(["{:>12}".format(len(res['path'])) if 'path' in res else na
+                              for _, res in result_tups]),
+        "cost    " + "".join(["{:>12,}".format(res['path_cost']) if 'path_cost' in res else na
+                              for _, res in result_tups]),
         "frontier" + ("{:>12,}" * c).format(*[res['frontier_count'] for _, res in result_tups]),
         "expanded" + ("{:>12,}" * c).format(*[res['expanded_count'] for _, res in result_tups])
     ]
 
     if include_path:
         rows.append("path")
-        longest_path = max([ len(res['path']) for _, res in result_tups if 'path' in res ])
+        longest_path = max([len(res['path']) for _, res in result_tups if 'path' in res])
         print("longest", longest_path)
         for i in range(longest_path):
             row = "        "
@@ -108,7 +107,7 @@ def print_table(flav__results, include_path=False):
                     move, state = res['path'][i]
                     row += " " + move[0] + " " + str(state)
                 else:
-                    row += " "*12
+                    row += " " * 12
             rows.append(row)
     print("\n" + "\n".join(rows), "\n")
 
@@ -143,7 +142,7 @@ class PuzzleSolver:
         path.reverse()
         return path
 
-    def get_cost(self, state): 
+    def get_cost(self, state):
         """Calculate the path cost from start state to a target state.
         
         Transition costs between states are equal to the square of the number on the tile that 
@@ -159,9 +158,9 @@ class PuzzleSolver:
         cost = 0
         path = self.get_path(state)
         for i in range(1, len(path)):
-            x, y = path[i-1].find(None)  # the most recently moved tile leaves the blank behind
-            tile = path[i].get_tile(x, y)        
-            cost += int(tile)**2
+            x, y = path[i - 1].find(None)  # the most recently moved tile leaves the blank behind
+            tile = path[i].get_tile(x, y)
+            cost += int(tile) ** 2
         return cost
 
     def get_results_dict(self, state):
@@ -180,7 +179,7 @@ class PuzzleSolver:
         if state:
             results['path_cost'] = self.get_cost(state)
             path = self.get_path(state)
-            moves = ['start'] + [ path[i-1].get_move(path[i]) for i in range(1, len(path)) ]
+            moves = ['start'] + [path[i - 1].get_move(path[i]) for i in range(1, len(path))]
             results['path'] = list(zip(moves, path))
         return results
 
@@ -196,7 +195,7 @@ class PuzzleSolver:
 
         """
         raise NotImplementedError('Classed inheriting from PuzzleSolver must implement solve()')
-        
+
 
 class BreadthFirstSolver(PuzzleSolver):
     """Implementation of Breadth-First Search based on PuzzleSolver"""
@@ -232,26 +231,25 @@ class BreadthFirstSolver(PuzzleSolver):
                 if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
 
-                # BFS checks for goal state _before_ adding to frontier
+                    # BFS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
                         self.add_to_frontier(succ)
 
         # if we get here, the search failed
-        return self.get_results_dict(None) 
-    
+        return self.get_results_dict(None)
+
+
 class UniformCostSolver(PuzzleSolver):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state, h):
+    def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue(PriorityQueue)
-        self.explored = set() # set function creates a set object and are in random order
+        self.explored = set()  # set function creates a set object and are in random order
         # key: child, value: (parent, direction of move, cost up to child)
-        #self.tracker = {start_state: (None,"start", 0)}
+        # self.tracker = {start_state: (None,"start", 0)}
         super().__init__(goal_state)
-        self.heur = h
-
 
     ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
     def add_to_frontier(self, node):
@@ -259,7 +257,6 @@ class UniformCostSolver(PuzzleSolver):
         # Frontier is an instance of Priority Queue
         self.frontier.add(node)
         self.frontier_count += 1
-
 
     def expand_node(self, node):
         """Get the next state from the frontier and increase the expanded count."""
@@ -272,8 +269,6 @@ class UniformCostSolver(PuzzleSolver):
     def solve(self, start_state):
         self.parents[start_state] = None
         self.add_to_frontier(start_state)
-
-
 
         ## Obviously we need to get the starting state and just look at that one first
         ## But from then on, we need to add and organize by lowest cost
@@ -291,8 +286,8 @@ class UniformCostSolver(PuzzleSolver):
             # Need to somehow determine which successor has the lowest cost and explore that first
             # Adds successors to priority queue based on cost
 
-            #lowest cost = 0
-            #for i in range(len(succs)):
+            # lowest cost = 0
+            # for i in range(len(succs)):
             #   if i == 0:
             #       add to queue
             #   if i.get_cost() > succs.get_cost():
@@ -300,21 +295,18 @@ class UniformCostSolver(PuzzleSolver):
             #   else:
             #       place in the back
 
-
             for move, succ in succs.items():
                 prev_cost = self.parents[succ]
-                new_cost = prev_cost + self.get_cost(node, succ)
+                new_cost = prev_cost + self.get_cost(succ)
                 if (succ in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
-                    self.frontier.add(succ, priority = new_cost)
-                    #frontier.add(n)
-                    #results["frontier_count"] += 1  # increase frontier count in results
+                    self.frontier.add(succ, priority=new_cost)
+                    # frontier.add(n)
+                    # results["frontier_count"] += 1  # increase frontier count in results
 
+                    # self.frontier.add(node, priority = cost)
 
-                # self.frontier.add(node, priority = cost)
-
-
-                # UCS checks for goal state _before_ adding to frontier
+                    # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     elif (succ not in self.frontier) and (self.frontier.get(succ) > new_cost):
@@ -367,6 +359,7 @@ class GreedySolver(PuzzleSolver):
         # if we get here, the search failed
         return self.get_results_dict(None)
 
+
 class AStarSolver(PuzzleSolver):
     """Implementation of Breadth-First Search based on PuzzleSolver"""
 
@@ -410,16 +403,15 @@ class AStarSolver(PuzzleSolver):
         # if we get here, the search failed
         return self.get_results_dict(None)
 
-
-
         ############################################
+
 
 if __name__ == '__main__':
 
     # parse the command line args
     start = puzz.EightPuzzleBoard(sys.argv[1])
     if sys.argv[2] == 'all':
-        flavors = ['bfs', 'ucost', 'greedy-h1', 'greedy-h2', 
+        flavors = ['bfs', 'ucost', 'greedy-h1', 'greedy-h2',
                    'greedy-h3', 'astar-h1', 'astar-h2', 'astar-h3']
     else:
         flavors = sys.argv[2:]
@@ -431,5 +423,3 @@ if __name__ == '__main__':
         results[flav] = solve_puzzle(start, flav)
 
     print_table(results, include_path=False)  # change to True to see the paths!
-
-
