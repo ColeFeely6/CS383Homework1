@@ -5,6 +5,14 @@ import pdqpq
 
 GOAL_STATE = puzz.EightPuzzleBoard("012345678")
 
+# Init issue:
+# So I am declaring an object and passing the wrong number of arguments into the constructor
+# So somewhere I am doing something like x = PuzzleSolver(something_I_dont_need)
+# So I need to find all the uses of my consctructors
+
+
+# PuzzleSolver
+#
 
 def solve_puzzle(start_state, flavor):
     """Perform a search to find a solution to a puzzle.
@@ -69,8 +77,8 @@ def get_test_puzzles():
     move_in_three = puzz.EightPuzzleBoard("312459678")
     move_in_ten = puzz.EightPuzzleBoard("320518467")
     move_in_twenty_five = puzz.EightPuzzleBoard("876021534")
-    # moves in: (3, )
-    return (move_in_three, move_in_ten, move_in_twenty_five)  # fix this line!
+
+    return move_in_three, move_in_ten, move_in_twenty_five  # fix this line!
 
 
 def print_table(flav__results, include_path=False):
@@ -245,7 +253,7 @@ class UniformCostSolver(PuzzleSolver):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
-        self.frontier = pdqpq.FifoQueue(PriorityQueue)
+        self.frontier = pdqpq.FifoQueue()
         self.explored = set()  # set function creates a set object and are in random order
         # key: child, value: (parent, direction of move, cost up to child)
         # self.tracker = {start_state: (None,"start", 0)}
@@ -296,15 +304,14 @@ class UniformCostSolver(PuzzleSolver):
             #       place in the back
 
             for move, succ in succs.items():
-                prev_cost = self.parents[succ]
+
+                #TODO May have to get the cost of below
+                prev_node = self.parents[succ]
+                prev_cost = self.get_cost(prev_cost)
                 new_cost = prev_cost + self.get_cost(succ)
                 if (succ in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
-                    self.frontier.add(succ, priority=new_cost)
-                    # frontier.add(n)
-                    # results["frontier_count"] += 1  # increase frontier count in results
-
-                    # self.frontier.add(node, priority = cost)
+                    self.frontier.add(succ, priority = new_cost)
 
                     # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
@@ -361,7 +368,7 @@ class GreedySolver(PuzzleSolver):
 
 
 class AStarSolver(PuzzleSolver):
-    """Implementation of Breadth-First Search based on PuzzleSolver"""
+    """Implementation of A* Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue()
