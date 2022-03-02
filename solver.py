@@ -286,19 +286,17 @@ class UniformCostSolver(PuzzleSolver):
             # Adds successors to priority queue based on cost
 
             for move, succ in succs.items():
-
-                #TODO May have to get the cost of below
                 prev_node = self.parents[succ]
                 prev_cost = self.get_cost(prev_node)
                 new_cost = prev_cost + self.get_cost(succ)
-                if (succ in self.frontier) and (succ not in self.explored):
+                if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
                     self.frontier.add(succ, priority = new_cost)
 
                     # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
-                    elif (succ not in self.frontier) and (self.frontier.get(succ) > new_cost):
+                    elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
                         self.add_to_frontier(succ)
 
         # if we get here, the search failed
