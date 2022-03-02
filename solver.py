@@ -285,20 +285,11 @@ class UniformCostSolver(PuzzleSolver):
             # Need to somehow determine which successor has the lowest cost and explore that first
             # Adds successors to priority queue based on cost
 
-            # lowest cost = 0
-            # for i in range(len(succs)):
-            #   if i == 0:
-            #       add to queue
-            #   if i.get_cost() > succs.get_cost():
-            #       add to queue but place in the front
-            #   else:
-            #       place in the back
-
             for move, succ in succs.items():
 
                 #TODO May have to get the cost of below
                 prev_node = self.parents[succ]
-                prev_cost = self.get_cost(prev_cost)
+                prev_cost = self.get_cost(prev_node)
                 new_cost = prev_cost + self.get_cost(succ)
                 if (succ in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
