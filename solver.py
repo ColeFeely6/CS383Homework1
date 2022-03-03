@@ -395,22 +395,22 @@ class AStarSolver(PuzzleSolver):
 
             for move, succ in succs.items():
                 prev_node = self.parents[succ]
-                    prev_dist = self.get_cost(prev_node)
+                prev_dist = self.get_cost(prev_node)
 
-                    new_dist = prev_dist + self.get_cost(succ)
+                new_dist = prev_dist + self.get_cost(succ)
 
-                    #Detect whether it is h1, h2, h3
-                    if self.heur == "h1":
-                        h_cost = self.h1(succ)
-                    elif self.heur == "h2":
-                        h_cost = self.h2(succ)
-                    elif self.heur == "h2":
-                        h_cost = self.h1(succ)
-                    else:
-                        raise NotImplementedError('Not a proper heuristic given')
+                #Detect whether it is h1, h2, h3
+                if self.heur == "h1":
+                    h_cost = self.h1(succ)
+                elif self.heur == "h2":
+                    h_cost = self.h2(succ)
+                elif self.heur == "h2":
+                    h_cost = self.h1(succ)
+                else:
+                    raise NotImplementedError('Not a proper heuristic given')
 
 
-                    new_priority = h_cost + new_dist
+                new_priority = h_cost + new_dist
 
                 if (succ not in self.frontier) and (succ not in self.explored):
 
