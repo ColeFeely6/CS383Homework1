@@ -250,7 +250,7 @@ class UniformCostSolver(PuzzleSolver):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
     def __init__(self, goal_state):
-        self.frontier = pdqpq.FifoQueue()
+        self.frontier = pdqpq.PriorityQueue()
         self.explored = set()  # set function creates a set object and are in random order
         # key: child, value: (parent, direction of move, cost up to child)
         # self.tracker = {start_state: (None,"start", 0)}
