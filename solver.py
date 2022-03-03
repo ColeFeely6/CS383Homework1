@@ -257,7 +257,7 @@ class UniformCostSolver(PuzzleSolver):
         super().__init__(goal_state)
 
     ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
-    def add_to_frontier_with_cost(self, node, cost):
+    def add_to_frontier(self, node, cost):
         """Add state to frontier and increase the frontier count."""
         # Frontier is an instance of Priority Queue
         self.frontier.add(node, priority = cost)
@@ -304,7 +304,7 @@ class UniformCostSolver(PuzzleSolver):
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
-                        self.frontier.add_to_frontier_with_cost(succ, priority = new_cost)
+                        self.frontier.add_to_frontier(succ, priority = new_cost)
 
                 elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
                     self.add_to_frontier(succ)
