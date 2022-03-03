@@ -409,7 +409,7 @@ class AStarSolver(PuzzleSolver):
                 # else:
                 #     raise NotImplementedError('Not a proper heuristic given')
 
-                new_dist = 1
+                h_cost = 1
                 new_priority = h_cost + new_dist
 
                 if (succ not in self.frontier) and (succ not in self.explored):
