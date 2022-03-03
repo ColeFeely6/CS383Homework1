@@ -299,14 +299,15 @@ class UniformCostSolver(PuzzleSolver):
                 if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
 
-
                     # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
                         self.frontier.add_to_frontier(succ, priority = new_cost)
 
-                elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
+                # Changing self.frontier.get(succ) to self.get_cost(succ)
+                # but I think that this is wrong because you need to look at what the frontier has for that state
+                elif (succ in self.frontier) and (self.get_cost(succ) > new_cost):
                     self.add_to_frontier(succ)
 
         # if we get here, the search failed
