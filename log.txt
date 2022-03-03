@@ -12,3 +12,8 @@ and for each consecutive pair of states in that path, it uses two specific lines
 the cost to get from the first state to the second. You can copy those two lines (and IIRC reformat the variables
 a little to work with your own implementation of UCSSolver) to make a helper method that calculates the cost from
 any state to any other state (the cost will be accurate if the transition is one step only and is valid).
+
+So there is an issue with how I am setting up the UCost function. I need to check it again but may need to go to
+Office hours tomorrow. 4-9pm.
+
+Once UCost is done, AStar should not be that bad, they are very similar
