@@ -6,3 +6,9 @@ the PQ class and the Fifo class does not take any arguements but self.
 
 New bug: the UCost function isn't working properly and isn't solving the puzzle.
 
+From Campuswire:
+There's a built-in method in solver.py called get_cost. It iterates through the path of the given state,
+and for each consecutive pair of states in that path, it uses two specific lines of code to calculate
+the cost to get from the first state to the second. You can copy those two lines (and IIRC reformat the variables
+a little to work with your own implementation of UCSSolver) to make a helper method that calculates the cost from
+any state to any other state (the cost will be accurate if the transition is one step only and is valid).

@@ -48,8 +48,14 @@ def solve_puzzle(start_state, flavor):
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
 
-    elif strat == 'astar':
-        return AStarSolver(GOAL_STATE).solve(start_state)
+    elif strat == 'astar-h1':
+        return AStarSolver(GOAL_STATE).solve(start_state,'h1')
+
+    elif strat == 'astar-h2':
+        return AStarSolver(GOAL_STATE).solve(start_state,'h2')
+
+    elif strat == 'astar-h3':
+        return AStarSolver(GOAL_STATE).solve(start_state,'h3')
     else:
         raise ValueError("Unknown search flavor '{}'".format(flavor))
 
@@ -277,7 +283,6 @@ class UniformCostSolver(PuzzleSolver):
 
         while not self.frontier.is_empty():
             node = self.frontier.pop()  # get the next node in the frontier queue
-
             succs = self.expand_node(node)
 
             # Need to reorder the succs
@@ -289,15 +294,17 @@ class UniformCostSolver(PuzzleSolver):
                 prev_node = self.parents[succ]
                 prev_cost = self.get_cost(prev_node)
                 new_cost = prev_cost + self.get_cost(succ)
+
                 if (succ not in self.frontier) and (succ not in self.explored):
+                    self.frontier.add(succ, priority=new_cost)
                     self.parents[succ] = node
-                    self.frontier.add(succ, priority = new_cost)
+
 
                     # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
-                    elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
-                        self.add_to_frontier(succ)
+                elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
+                    self.add_to_frontier(succ)
 
         # if we get here, the search failed
         return self.get_results_dict(None)
@@ -350,10 +357,10 @@ class GreedySolver(PuzzleSolver):
 class AStarSolver(PuzzleSolver):
     """Implementation of A* Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state):
+    def __init__(self, goal_state, heur):
         self.frontier = pdqpq.FifoQueue()
         self.explored = set()
-        super().__init__(goal_state)
+        super().__init__(goal_state,heur)
 
     def add_to_frontier(self, node):
         """Add state to frontier and increase the frontier count."""
@@ -365,6 +372,15 @@ class AStarSolver(PuzzleSolver):
         self.explored.add(node)
         self.expanded_count += 1
         return node.successors()
+
+    def h1(self,succ):
+        continue
+
+    def h2(self, succ):
+        continue
+
+    def h3(self, succ):
+        continue
 
     def solve(self, start_state):
         self.parents[start_state] = None
@@ -378,10 +394,29 @@ class AStarSolver(PuzzleSolver):
             succs = self.expand_node(node)
 
             for move, succ in succs.items():
-                if (succ not in self.frontier) and (succ not in self.explored):
-                    self.parents[succ] = node
+                prev_node = self.parents[succ]
+                    prev_dist = self.get_cost(prev_node)
 
-                    # BFS checks for goal state _before_ adding to frontier
+                    new_dist = prev_dist + self.get_cost(succ)
+
+                    #Detect whether it is h1, h2, h3
+                    if self.heur == "h1":
+                        h_cost = self.h1(succ)
+                    elif self.heur == "h2":
+                        h_cost = self.h2(succ)
+                    elif self.heur == "h2":
+                        h_cost = self.h1(succ)
+                    else:
+                        raise NotImplementedError('Not a proper heuristic given')
+
+
+                    new_priority = h_cost + new_dist
+
+                if (succ not in self.frontier) and (succ not in self.explored):
+
+                    self.parents[succ] = node
+                    self.frontier.add(succ, priority = new_priority)
+
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
