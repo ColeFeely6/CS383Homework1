@@ -373,14 +373,14 @@ class AStarSolver(PuzzleSolver):
         self.expanded_count += 1
         return node.successors()
 
-    def h1(self,succ):
-        continue
+    #def h1(self,succ):
+        # TODO
 
-    def h2(self, succ):
-        continue
+    #def h2(self, succ):
+        #continue
 
-    def h3(self, succ):
-        continue
+    #def h3(self, succ):
+        #continue
 
     def solve(self, start_state):
         self.parents[start_state] = None
@@ -400,16 +400,16 @@ class AStarSolver(PuzzleSolver):
                 new_dist = prev_dist + self.get_cost(succ)
 
                 #Detect whether it is h1, h2, h3
-                if self.heur == "h1":
-                    h_cost = self.h1(succ)
-                elif self.heur == "h2":
-                    h_cost = self.h2(succ)
-                elif self.heur == "h2":
-                    h_cost = self.h1(succ)
-                else:
-                    raise NotImplementedError('Not a proper heuristic given')
+                # if self.heur == "h1":
+                #     h_cost = self.h1(succ)
+                # elif self.heur == "h2":
+                #     h_cost = self.h2(succ)
+                # elif self.heur == "h2":
+                #     h_cost = self.h1(succ)
+                # else:
+                #     raise NotImplementedError('Not a proper heuristic given')
 
-
+                new_dist = 1
                 new_priority = h_cost + new_dist
 
                 if (succ not in self.frontier) and (succ not in self.explored):
