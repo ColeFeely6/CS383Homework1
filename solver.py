@@ -257,10 +257,10 @@ class UniformCostSolver(PuzzleSolver):
         super().__init__(goal_state)
 
     ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
-    def add_to_frontier(self, node):
+    def add_to_frontier_with_cost(self, node, cost):
         """Add state to frontier and increase the frontier count."""
         # Frontier is an instance of Priority Queue
-        self.frontier.add(node)
+        self.frontier.add(node, priority = cost)
         self.frontier_count += 1
 
     def expand_node(self, node):
@@ -273,7 +273,7 @@ class UniformCostSolver(PuzzleSolver):
     # Need to account for the weights and cost in UCS
     def solve(self, start_state):
         self.parents[start_state] = None
-        self.add_to_frontier(start_state)
+        self.add_to_frontier(start_state, 0)
 
         ## Obviously we need to get the starting state and just look at that one first
         ## But from then on, we need to add and organize by lowest cost
@@ -291,12 +291,13 @@ class UniformCostSolver(PuzzleSolver):
             # Adds successors to priority queue based on cost
 
             for move, succ in succs.items():
+                # Possible issue: this doesn't go all the way to the start of the node and get all the parent's costs
                 prev_node = self.parents[succ]
                 prev_cost = self.get_cost(prev_node)
                 new_cost = prev_cost + self.get_cost(succ)
 
                 if (succ not in self.frontier) and (succ not in self.explored):
-                    self.frontier.add(succ, priority=new_cost)
+                    self.frontier.add_to_frontier_with_cost(succ, priority = new_cost)
                     self.parents[succ] = node
 
 
