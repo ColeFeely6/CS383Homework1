@@ -303,6 +303,9 @@ class UniformCostSolver(PuzzleSolver):
                     # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
+                    else:
+                        self.add_to_frontier(succ)
+                        
                 elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
                     self.add_to_frontier(succ)
 
