@@ -49,9 +49,9 @@ def solve_puzzle(start_state, flavor):
         return GreedySolver(GOAL_STATE).solve(start_state)
 
     elif strat == 'greedy':
-        return GreedySolver(GOAL_STATE).solve(start_state)
+        return GreedySolver(GOAL_STATE).solve(start_state,heurgi)
     elif strat == 'astar':
-        return AStarSolver(GOAL_STATE).solve(start_state)
+        return AStarSolver(GOAL_STATE).solve(start_state,heur)
     # elif strat == 'astar-h1':
     #     return AStarSolver(GOAL_STATE).solve(start_state,'h1')
     #
