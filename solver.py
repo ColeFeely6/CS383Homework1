@@ -47,7 +47,7 @@ def solve_puzzle(start_state, flavor):
 
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
-    
+
     elif strat == 'astar':
         return AStarSolver(GOAL_STATE).solve(start_state,heur)
     # elif strat == 'astar-h1':
@@ -369,7 +369,7 @@ class AStarSolver(PuzzleSolver):
     def __init__(self, goal_state, heur):
         self.frontier = pdqpq.PriorityQueue()
         self.explored = set()  # set function creates a set object and are in random order
-        self.h = heur
+        self.heur = heur
         super().__init__(goal_state)
 
 
