@@ -48,14 +48,18 @@ def solve_puzzle(start_state, flavor):
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
 
-    elif strat == 'astar-h1':
-        return AStarSolver(GOAL_STATE).solve(start_state,'h1')
-
-    elif strat == 'astar-h2':
-        return AStarSolver(GOAL_STATE).solve(start_state,'h2')
-
-    elif strat == 'astar-h3':
-        return AStarSolver(GOAL_STATE).solve(start_state,'h3')
+    elif strat == 'greedy':
+        return GreedySolver(GOAL_STATE).solve(start_state)
+    elif strat == 'astar':
+        return AStarSolver(GOAL_STATE).solve(start_state)
+    # elif strat == 'astar-h1':
+    #     return AStarSolver(GOAL_STATE).solve(start_state,'h1')
+    #
+    # elif strat == 'astar-h2':
+    #     return AStarSolver(GOAL_STATE).solve(start_state,'h2')
+    #
+    # elif strat == 'astar-h3':
+    #     return AStarSolver(GOAL_STATE).solve(start_state,'h3')
     else:
         raise ValueError("Unknown search flavor '{}'".format(flavor))
 
@@ -308,7 +312,6 @@ class UniformCostSolver(PuzzleSolver):
                     new_cost = prev_cost + self.get_cost(succ)
                     self.parents[succ] = succ
                     if self.frontier.get(succ) > new_cost:
-
                         #need to update, possibly may need to remove then add???
                         self.add_to_frontier(succ, self.get_cost(succ))
                     else:
