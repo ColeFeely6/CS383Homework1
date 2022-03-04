@@ -368,73 +368,75 @@ class GreedySolver(PuzzleSolver):
         return self.get_results_dict(None)
 
 
-class AStarSolver(PuzzleSolver):
-    """Implementation of A* Search based on PuzzleSolver"""
+class ASolver(PuzzleSolver):
+    """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state, heur):
-        self.frontier = pdqpq.FifoQueue()
-        self.explored = set()
-        super().__init__(goal_state,heur)
+    def __init__(self, goal_state):
+        self.frontier = pdqpq.PriorityQueue()
+        self.explored = set()  # set function creates a set object and are in random order
+        # key: child, value: (parent, direction of move, cost up to child)
+        # self.tracker = {start_state: (None,"start", 0)}
+        super().__init__(goal_state)
 
-    def add_to_frontier(self, node):
+    ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
+    def add_to_frontier(self, node, cost):
         """Add state to frontier and increase the frontier count."""
-        self.frontier.add(node)
+        # Frontier is an instance of Priority Queue
+        self.frontier.add(node, priority = cost)
         self.frontier_count += 1
 
     def expand_node(self, node):
         """Get the next state from the frontier and increase the expanded count."""
+
         self.explored.add(node)
         self.expanded_count += 1
         return node.successors()
 
-    #def h1(self,succ):
-        # TODO
-
-    #def h2(self, succ):
-        #continue
-
-    #def h3(self, succ):
-        #continue
-
+    # Need to account for the weights and cost in UCS
     def solve(self, start_state):
         self.parents[start_state] = None
-        self.add_to_frontier(start_state)
+        self.add_to_frontier(start_state, 0)
+
+        ## Obviously we need to get the starting state and just look at that one first
+        ## But from then on, we need to add and organize by lowest cost
 
         if start_state == self.goal:  # edge case
             return self.get_results_dict(start_state)
 
         while not self.frontier.is_empty():
             node = self.frontier.pop()  # get the next node in the frontier queue
+
+            if node == self.goal:
+                return self.get_results_dict(node)
             succs = self.expand_node(node)
 
+            # prev_node = self.parents[succ]
+            # prev_cost = self.get_cost(prev_node)
+            # new_cost = prev_cost + self.get_cost(succ)
+
             for move, succ in succs.items():
-                prev_node = self.parents[succ]
-                prev_dist = self.get_cost(prev_node)
-
-                new_dist = prev_dist + self.get_cost(succ)
-
-                #Detect whether it is h1, h2, h3
-                # if self.heur == "h1":
-                #     h_cost = self.h1(succ)
-                # elif self.heur == "h2":
-                #     h_cost = self.h2(succ)
-                # elif self.heur == "h2":
-                #     h_cost = self.h1(succ)
-                # else:
-                #     raise NotImplementedError('Not a proper heuristic given')
-
-                h_cost = 1
-                new_priority = h_cost + new_dist
-
                 if (succ not in self.frontier) and (succ not in self.explored):
-
                     self.parents[succ] = node
-                    self.frontier.add(succ, priority = new_priority)
 
+                    # UCS checks for goal state _before_ adding to frontier
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
-                        self.add_to_frontier(succ)
+                        self.add_to_frontier(succ, self.get_cost(succ))
+
+                elif succ in self.frontier:
+                    prev_node = self.parents[succ]
+                    prev_cost = self.get_cost(prev_node)
+                    new_cost = prev_cost + self.get_cost(succ)
+                    self.parents[succ] = succ
+                    if self.frontier.get(succ) > new_cost:
+                        #need to update, possibly may need to remove then add???
+                        self.add_to_frontier(succ, self.get_cost(succ))
+                    else:
+                        self.parents[succ] = prev_node
+
+                # elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
+                #     self.add_to_frontier(succ)
 
         # if we get here, the search failed
         return self.get_results_dict(None)
