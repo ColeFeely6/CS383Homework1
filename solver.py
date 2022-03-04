@@ -279,8 +279,6 @@ class UniformCostSolver(PuzzleSolver):
         self.parents[start_state] = None
         self.add_to_frontier(start_state, 0)
 
-        ## Obviously we need to get the starting state and just look at that one first
-        ## But from then on, we need to add and organize by lowest cost
 
         if start_state == self.goal:  # edge case        
             return self.get_results_dict(start_state)
@@ -292,9 +290,6 @@ class UniformCostSolver(PuzzleSolver):
                 return self.get_results_dict(node)
             succs = self.expand_node(node)
 
-            # prev_node = self.parents[succ]
-            # prev_cost = self.get_cost(prev_node)
-            # new_cost = prev_cost + self.get_cost(succ)
 
             for move, succ in succs.items():
                 if (succ not in self.frontier) and (succ not in self.explored):
@@ -317,8 +312,6 @@ class UniformCostSolver(PuzzleSolver):
                     else:
                         self.parents[succ] = prev_node
 
-                # elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
-                #     self.add_to_frontier(succ)
 
         # if we get here, the search failed
         return self.get_results_dict(None)
@@ -327,9 +320,10 @@ class UniformCostSolver(PuzzleSolver):
 class GreedySolver(PuzzleSolver):
     """Implementation of Greedy-First Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state):
+    def __init__(self, goal_state, heur):
         self.frontier = pdqpq.FifoQueue()
         self.explored = set()
+        self.h = heur
         super().__init__(goal_state)
 
     def add_to_frontier(self, node):
@@ -368,17 +362,20 @@ class GreedySolver(PuzzleSolver):
         return self.get_results_dict(None)
 
 
-class ASolver(PuzzleSolver):
+class AStarSolver(PuzzleSolver):
     """Implementation of Uniform-Cost Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state):
+
+    # AStar will be exactly like UCost, but the cost will also account for the heuristic for the priority queue.
+    # The heuristic will depend on what the algorithm passes through
+
+    def __init__(self, goal_state, heur):
         self.frontier = pdqpq.PriorityQueue()
         self.explored = set()  # set function creates a set object and are in random order
-        # key: child, value: (parent, direction of move, cost up to child)
-        # self.tracker = {start_state: (None,"start", 0)}
+        self.h = heur
         super().__init__(goal_state)
 
-    ##TODO/ MAJOR WE NEED TO MODIFY EXPAND NODE SO THAT IT ORDERS THEM BY LOWEST COST
+
     def add_to_frontier(self, node, cost):
         """Add state to frontier and increase the frontier count."""
         # Frontier is an instance of Priority Queue
@@ -397,8 +394,6 @@ class ASolver(PuzzleSolver):
         self.parents[start_state] = None
         self.add_to_frontier(start_state, 0)
 
-        ## Obviously we need to get the starting state and just look at that one first
-        ## But from then on, we need to add and organize by lowest cost
 
         if start_state == self.goal:  # edge case
             return self.get_results_dict(start_state)
@@ -410,9 +405,6 @@ class ASolver(PuzzleSolver):
                 return self.get_results_dict(node)
             succs = self.expand_node(node)
 
-            # prev_node = self.parents[succ]
-            # prev_cost = self.get_cost(prev_node)
-            # new_cost = prev_cost + self.get_cost(succ)
 
             for move, succ in succs.items():
                 if (succ not in self.frontier) and (succ not in self.explored):
