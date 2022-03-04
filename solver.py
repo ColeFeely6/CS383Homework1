@@ -283,19 +283,13 @@ class UniformCostSolver(PuzzleSolver):
 
         while not self.frontier.is_empty():
             node = self.frontier.pop()  # get the next node in the frontier queue
+
+            if node == self.goal:
+                return self.get_results_dict(node)
             succs = self.expand_node(node)
 
-            # Need to reorder the succs
-
-            # Need to somehow determine which successor has the lowest cost and explore that first
-            # Adds successors to priority queue based on cost
 
             for move, succ in succs.items():
-                # Possible issue: this doesn't go all the way to the start of the node and get all the parent's costs
-                prev_node = self.parents[succ]
-                prev_cost = self.get_cost(prev_node)
-                new_cost = prev_cost + self.get_cost(succ)
-
                 if (succ not in self.frontier) and (succ not in self.explored):
                     self.parents[succ] = node
 
@@ -303,12 +297,19 @@ class UniformCostSolver(PuzzleSolver):
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
-                        self.frontier.add_to_frontier(succ, priority = new_cost)
+                        self.add_to_frontier(succ, priority = self.get_cost(succ))
 
-                # Changing self.frontier.get(succ) to self.get_cost(succ)
-                # but I think that this is wrong because you need to look at what the frontier has for that state
-                elif (succ in self.frontier) and (self.get_cost(succ) > new_cost):
-                    self.add_to_frontier(succ)
+                elif succ in self.frontier:
+                    old_parent = self.parents[succ]
+                    self.parent[succ] = succ
+                    if self.frontier.get(succ) > self.get_cost(succ):
+                        #need to update, possibly may need to remove then add???
+                        self.add_to_frontier(succ, priority=self.get_cost(succ))
+                    else:
+                        self.parent[succ] = old_parent
+
+                # elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
+                #     self.add_to_frontier(succ)
 
         # if we get here, the search failed
         return self.get_results_dict(None)
