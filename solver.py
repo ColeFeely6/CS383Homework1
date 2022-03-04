@@ -288,6 +288,9 @@ class UniformCostSolver(PuzzleSolver):
                 return self.get_results_dict(node)
             succs = self.expand_node(node)
 
+            # prev_node = self.parents[succ]
+            # prev_cost = self.get_cost(prev_node)
+            # new_cost = prev_cost + self.get_cost(succ)
 
             for move, succ in succs.items():
                 if (succ not in self.frontier) and (succ not in self.explored):
@@ -300,13 +303,16 @@ class UniformCostSolver(PuzzleSolver):
                         self.add_to_frontier(succ, self.get_cost(succ))
 
                 elif succ in self.frontier:
-                    old_parent = self.parents[succ]
+                    prev_node = self.parents[succ]
+                    prev_cost = self.get_cost(prev_node)
+                    new_cost = prev_cost + self.get_cost(succ)
                     self.parents[succ] = succ
-                    if self.frontier.get(succ) > self.get_cost(succ):
+                    if self.frontier.get(succ) > new_cost:
+
                         #need to update, possibly may need to remove then add???
                         self.add_to_frontier(succ, self.get_cost(succ))
                     else:
-                        self.parents[succ] = old_parent
+                        self.parents[succ] = prev_node
 
                 # elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
                 #     self.add_to_frontier(succ)
