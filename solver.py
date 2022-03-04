@@ -47,9 +47,7 @@ def solve_puzzle(start_state, flavor):
 
     elif strat == 'greedy':
         return GreedySolver(GOAL_STATE).solve(start_state)
-
-    elif strat == 'greedy':
-        return GreedySolver(GOAL_STATE).solve(start_state)
+    
     elif strat == 'astar':
         return AStarSolver(GOAL_STATE).solve(start_state,heur)
     # elif strat == 'astar-h1':
@@ -320,10 +318,9 @@ class UniformCostSolver(PuzzleSolver):
 class GreedySolver(PuzzleSolver):
     """Implementation of Greedy-First Search based on PuzzleSolver"""
 
-    def __init__(self, goal_state, heur):
+    def __init__(self, goal_state):
         self.frontier = pdqpq.FifoQueue()
         self.explored = set()
-        self.h = heur
         super().__init__(goal_state)
 
     def add_to_frontier(self, node):
