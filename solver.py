@@ -297,14 +297,14 @@ class UniformCostSolver(PuzzleSolver):
                     if succ == self.goal:
                         return self.get_results_dict(succ)
                     else:
-                        self.add_to_frontier(succ, priority = self.get_cost(succ))
+                        self.add_to_frontier(succ, self.get_cost(succ))
 
                 elif succ in self.frontier:
                     old_parent = self.parents[succ]
                     self.parent[succ] = succ
                     if self.frontier.get(succ) > self.get_cost(succ):
                         #need to update, possibly may need to remove then add???
-                        self.add_to_frontier(succ, priority=self.get_cost(succ))
+                        self.add_to_frontier(succ, self.get_cost(succ))
                     else:
                         self.parent[succ] = old_parent
 
