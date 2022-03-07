@@ -360,7 +360,7 @@ class GreedySolver(PuzzleSolver):
 
 
 class AStarSolver(PuzzleSolver):
-    """Implementation of Uniform-Cost Search based on PuzzleSolver"""
+    """Implementation of A* Search based on PuzzleSolver"""
 
 
     # AStar will be exactly like UCost, but the cost will also account for the heuristic for the priority queue.
@@ -370,7 +370,7 @@ class AStarSolver(PuzzleSolver):
         self.frontier = pdqpq.PriorityQueue()
         self.explored = set()  # set function creates a set object and are in random order
         self.heur = heur
-        super().__init__(goal_state, heur)
+        super().__init__(goal_state)
 
 
     def add_to_frontier(self, node, cost):
@@ -387,7 +387,7 @@ class AStarSolver(PuzzleSolver):
         return node.successors()
 
 
-    def get_h_cost(self,state):
+    def get_h_cost(self, state):
         if self.heur == 'h1':
             cost = 0
             str_puzz = str(state)
