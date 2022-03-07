@@ -386,6 +386,33 @@ class AStarSolver(PuzzleSolver):
         self.expanded_count += 1
         return node.successors()
 
+
+    def get_h_cost(self,heur,state):
+        if heur == 'h1':
+            cost = 0
+            str_puzz = str(state)
+            for i in range(1, 9):
+                if i != int(str_puzz[i]):
+                    cost += 1
+            return cost
+        elif heur == 'h2':
+            cost = 0
+            for i in range(1, 9):
+                x, y = state.find(str(i))
+                x0, y0 = GOAL_STATE.find(str(i))
+                cost += abs(x - x0) + abs(y - y0)
+            return cost
+        elif heur == 'h3':
+            cost = 0
+            for i in range(0, 9):
+                x, y = state.find(str(i))
+                x0, y0 = GOAL_STATE.find(str(i))
+                score = abs(x - x0) + abs(y - y0)
+                cost += score * i ** 2
+            return cost
+
+
+
     # Need to account for the weights and cost in UCS
     def solve(self, start_state):
         self.parents[start_state] = None
@@ -416,7 +443,9 @@ class AStarSolver(PuzzleSolver):
                 elif succ in self.frontier:
                     prev_node = self.parents[succ]
                     prev_cost = self.get_cost(prev_node)
-                    new_cost = prev_cost + self.get_cost(succ)
+                    # Get the h_cost
+                    h_cost = self.get_h_cost(self.heur,succ)
+                    new_cost = prev_cost + self.get_cost(succ) + h_cost
                     self.parents[succ] = succ
                     if self.frontier.get(succ) > new_cost:
                         #need to update, possibly may need to remove then add???
@@ -424,8 +453,6 @@ class AStarSolver(PuzzleSolver):
                     else:
                         self.parents[succ] = prev_node
 
-                # elif (succ in self.frontier) and (self.frontier.get(succ) > new_cost):
-                #     self.add_to_frontier(succ)
 
         # if we get here, the search failed
         return self.get_results_dict(None)
