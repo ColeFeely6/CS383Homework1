@@ -370,7 +370,7 @@ class AStarSolver(PuzzleSolver):
         self.frontier = pdqpq.PriorityQueue()
         self.explored = set()  # set function creates a set object and are in random order
         self.heur = heur
-        super().__init__(goal_state)
+        super().__init__(goal_state, heur)
 
 
     def add_to_frontier(self, node, cost):
@@ -387,22 +387,22 @@ class AStarSolver(PuzzleSolver):
         return node.successors()
 
 
-    def get_h_cost(self,heur,state):
-        if heur == 'h1':
+    def get_h_cost(self,state):
+        if self.heur == 'h1':
             cost = 0
             str_puzz = str(state)
             for i in range(1, 9):
                 if i != int(str_puzz[i]):
                     cost += 1
             return cost
-        elif heur == 'h2':
+        elif self.heur == 'h2':
             cost = 0
             for i in range(1, 9):
                 x, y = state.find(str(i))
                 x0, y0 = GOAL_STATE.find(str(i))
                 cost += abs(x - x0) + abs(y - y0)
             return cost
-        elif heur == 'h3':
+        elif self.heur == 'h3':
             cost = 0
             for i in range(0, 9):
                 x, y = state.find(str(i))
@@ -444,7 +444,7 @@ class AStarSolver(PuzzleSolver):
                     prev_node = self.parents[succ]
                     prev_cost = self.get_cost(prev_node)
                     # Get the h_cost
-                    h_cost = self.get_h_cost(self.heur,succ)
+                    h_cost = self.get_h_cost(succ)
                     new_cost = prev_cost + self.get_cost(succ) + h_cost
                     self.parents[succ] = succ
                     if self.frontier.get(succ) > new_cost:
